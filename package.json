@@ -1,0 +1,23 @@
+{
+  "name": "audio_split",
+  "version": "1.0.0",
+  "description": "split audio file by time stamps",
+  "main": "main.js",
+  "dependencies": {
+    "ffmpeg": "0.0.4"
+  },
+  "directories": {
+      "test": "test"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "electron": "^1.8.4",
+    "mocha": "^5.1.1"
+  },
+  "scripts": {
+    "start": "electron .",
+    "test": "mocha"
+  },
+  "author": "Nico Ledwith",
+  "license": "ISC"
+}

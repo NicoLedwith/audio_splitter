@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>SongSpliter</title>
+        <link rel="stylesheet" href="css/app.css">
+    </head>
+    <body>
+        <div class="flex container">
+            <div id="drag">
+                Drag your file here
+                <br>
+                <span id="file-name"></span>
+            </div>
+            <p>Paste in tack list and time info below</p>
+            <div id="track-list">
+                <textarea id="track-list-input" rows="15" cols="60"></textarea>
+            </div>
+            <div id="go-button">
+                Split
+            </div>
+            <div id="results-list">
+                <!-- added w JS -->
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            const {ipcRenderer} = require('electron')
+            const fName = document.getElementById('file-name')
+            const splitBtn = document.getElementById('go-button')
+            const songs = document.getElementById('track-list-input')
+            const results = document.getElementById('results-list')
+
+            const pWrap = c => "<p>" + c + "</p>"
+
+            document.addEventListener('drop', function (e) {
+                console.log(e)
+                e.preventDefault();
+                e.stopPropagation();
+
+                for (let f of e.dataTransfer.files) {
+                    console.log('File(s) you dragged here: ', f.path)
+                    ipcRenderer.send('main', f.path)
+                    fName.innerHTML = f.path.split('/').reverse()[0];
+                }
+            });
+            document.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            splitBtn.onclick = () => {
+                ipcRenderer.send('split', songs.value)
+            }
+
+            ipcRenderer.on('result', (ev, res) => {
+                if (res.status === "ok") {
+                    results.innerHTML += pWrap("Created "+ res.fName.split('\\').join(''))
+                }
+                else if (res.status === "bad") {
+                    results.innerHTML += pWrap("An error occured: " + res.err)
+                }
+            })
+        </script>
+    </body>
+</html>
